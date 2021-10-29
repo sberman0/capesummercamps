@@ -1,10 +1,10 @@
 <?php
 
 // Get data from the form
-$firstName = $_POST["fName"];
-$lastName = $_POST["lName"];
-$email = $_POST["theEmail"];
-$comments = $_POST["theComments"];
+$firstName = $_POST["FirstName"];
+$lastName = $_POST["LastName"];
+$email = $_POST["EmailAddress"];
+$comments = $_POST["FormComments"];
 
 $todayDate = date("m/d/Y");
 $time = date("H:i");

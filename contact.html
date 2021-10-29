@@ -1,7 +1,7 @@
 <!--
 Cape Elizabeth Community Services Summer Camp Website
 Written By: Sam Berman
-Date Updated: July 7, 2021
+Date Updated: October 28, 2021
 
 contact.html
 -->
@@ -163,9 +163,58 @@ contact.html
 
     </style>
 
-    <script language="javascript">
-        
-    </script>
+    <script type="text/javascript">
+
+        function validateTextField(fieldname) { 
+            // var badchars = /"/g;
+            // var goodchars = /^[a-z0-9A-Z]*$/;
+            var badchars = /[#$%^&*+=\[\]{};':"\\|<>\/]+/;
+            var empty = /^\s*$/g;
+            var fieldvalue = document.getElementsByName(fieldname)[0].value;
+    
+            formValid = !badchars.test(fieldvalue);
+
+            if (!formValid) 
+                alert("Illegal characters in " + fieldname);
+
+            else if (empty.test(fieldvalue)) {
+                formValid = false;
+                alert("You cannot leave " + fieldname + " blank");
+            }
+
+            return formValid;
+        }
+
+        function validateEmail(fieldname) {  
+            var fieldvalue = document.getElementsByName(fieldname)[0].value;
+            var atposition = fieldvalue.indexOf("@");
+            var dotposition = fieldvalue.lastIndexOf(".");
+
+            if (atposition < 1 || dotposition < atposition+2 
+                               || dotposition + 2 >= fieldvalue.length) {  
+                alert("Please enter a valid e-mail address");  
+                return false;  
+            } else {
+                return true;
+            }
+        }
+
+        function validateForm() {
+            formValid = validateTextField("FirstName") &&
+                        validateTextField("LastName") &&
+                        validateTextField("EmailAddress") &&
+                        validateEmail("EmailAddress") &&
+                        validateTextField("FormComments") &&
+                        validateTextField("MathAnswer");
+
+            return formValid;
+        }
+
+        function reloadPage() {
+            location.reload();
+        }
+
+    </script> 
 
 </head>
 
@@ -249,20 +298,20 @@ contact.html
 
                     <form method="post" id="emailForm"
                     action="https://www.eecs.tufts.edu/~sberma04/cecs-camps/cecs-email.php"
-                    target="frame" onSubmit="return formReload()">
+                    target="frame" onSubmit="return validateAndSubmit()">
 
-                    First Name: <input type="text" name="fName" required><br/>
-                    Last Name: <input type="text" name="lName" required><br/>
-                    Email: <input type="text" name="theEmail" required><br/>
-                    Message: <textarea name="theComments" required></textarea><br/>
-                    Math Question (To Deter Spam):<br/>
-                    What is <span id="firstNum"></span> + <span id="secondNum"></span>? &nbsp;<input type="number" name="math" required><br/>
+                    First Name: * <input type="text" name="FirstName"><br/>
+                    Last Name: * <input type="text" name="LastName"><br/>
+                    Email: * <input type="text" name="EmailAddress"><br/>
+                    Message: * <textarea name="FormComments"></textarea><br/>
+                    Math Question (To Deter Spam): *<br/>
+                    What is <span id="firstNum"></span> + <span id="secondNum"></span>? &nbsp;<input type="number" name="MathAnswer"><br/>
 
                     <div align="center">
                         <input type="submit" value="Submit"><br/>
 
                         <div id="message">Enter the information above and click "Submit" and we will
-                        get back to you ASAP.</div>
+                        get back to you ASAP!</div>
                     </div>
                    
                     </form>
@@ -277,14 +326,14 @@ contact.html
     $(document).ready(function () {
 
         // Listen to submit event on the <form> itself
-        $('#contactForm').submit(function (e) {
+        $('#emailForm').submit(function (e) {
 
         e.preventDefault();
 
-        var firstName = $("#fName").val();
-        var lastName = $("#lName").val();
-        var email = $("#theEmail").val();
-        var comments = $("#theComments").val();
+        var firstName = $("#FirstName").val();
+        var lastName = $("#LastName").val();
+        var email = $("#EmailAddress").val();
+        var comments = $("#FormComments").val();
 
         $.post("cecs-email.php", {
             firstName: firstName,
@@ -306,39 +355,32 @@ contact.html
             range = maxValue - minValue;
             n = Math.random() * range + minValue;
             n = parseInt(n);
-            //alert(n)
             return n;
         }
 
-        n1 = getRand(1, 9);
-        n2 = getRand(1, 9);
+        n1 = getRand(1, 15);
+        n2 = getRand(1, 15);
 
         document.getElementById("firstNum").innerHTML = n1;
         document.getElementById("secondNum").innerHTML = n2;
 
-        function reloadPage() {
-            location.reload();
-        }
+        function validateAndSubmit() {
+            var mathAnswer = document.forms["emailForm"]["MathAnswer"].value;
 
-        function formReload() {
-            var fn = document.forms["emailForm"]["fName"].value;
-            var ln = document.forms["emailForm"]["lName"].value;
-            var em = document.forms["emailForm"]["theEmail"].value;
-            var com = document.forms["emailForm"]["theComments"].value;
-            var mathAnswer = document.forms["emailForm"]["math"].value;
-
-            if (fn != "" && ln != "" && em != "" && com != "" && (mathAnswer == n1+n2)) {
+            if (validateForm() && (mathAnswer == n1+n2)) {
                 document.getElementById("message").innerHTML = 
                 "<div style='color: #c90000'>Successfully Submitted! We will get back to you ASAP.</div>";
 
                 setTimeout(reloadPage, 2000);
 
                 return true;
-            } else if (fn != "" && ln != "" && em != "" && com != "" && (mathAnswer != n1+n2)) {
+
+            } else if (validateForm() && (mathAnswer != n1+n2)) {
                 document.getElementById("message").innerHTML = 
                 "<div style='color: #c90000'>Math question answered incorrectly. Please try again and resubmit.</div>";
 
                 return false;
+
             } else {
                 return false;
             }
