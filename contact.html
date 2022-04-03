@@ -306,8 +306,9 @@ contact.html
                     <form method="post" 
                           id="emailForm"
                           onSubmit="return(validateAndSubmit());"
-                          action="https://www.eecs.tufts.edu/~sberma04/cecs-camps/cecs-email.php"
                           target="frame" >
+                    
+                    <!-- action="https://www.eecs.tufts.edu/~sberma04/cecs-camps/cecs-email.php" -->
 
                     First Name: * <input type="text" name="FirstName"><br/>
                     Last Name: * <input type="text" name="LastName"><br/>
@@ -394,8 +395,12 @@ contact.html
                 return false;
             }
 
+            // document.getElementById("message").innerHTML = 
+            // "<div style='color: #2c6630;'>Successfully Submitted! We will get back to you ASAP.</div>";
+
             document.getElementById("message").innerHTML = 
-            "<div style='color: #2c6630;'>Successfully Submitted! We will get back to you ASAP.</div>";
+            "<div style='color: #c90000;'>Contact form temporarily down. Please try again later.</div>";
+            
 
             setTimeout(reloadPage, 2000);
 
